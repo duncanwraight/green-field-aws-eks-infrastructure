@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: wallet
+  labels:
+    # This label is used for "selector" purposes
+    # clam-av networkpolicy uses this to allow communication with wallet pods on port 3310
+    app.kubernetes.io/name: wallet

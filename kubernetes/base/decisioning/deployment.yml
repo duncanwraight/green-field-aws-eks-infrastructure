@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decisioning
+  namespace: decisioning
+  labels:
+    app.kubernetes.io/name: decisioning
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: decisioning
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: decisioning
+    spec:
+      serviceAccountName: decisioning
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values: [decisioning]
+                topologyKey: failure-domain.beta.kubernetes.io/zone
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values: [decisioning]
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: decisioning
+          resources:
+            requests:
+              cpu: 0.5
+              memory: 750Mi
+            limits:
+              cpu: 1
+              memory: 1500Mi
+      # Until this is fixed : https://github.com/aws/amazon-eks-pod-identity-webhook/issues/8
+      securityContext:
+        fsGroup: 65534

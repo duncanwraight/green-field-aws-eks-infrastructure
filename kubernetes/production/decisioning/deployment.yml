@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decisioning
+  namespace: decisioning
+spec:
+  replicas: 5
+  template:
+    spec:
+      containers:
+        - name: decisioning
+          image: 1234567891011.dkr.ecr.eu-west-2.amazonaws.com/decisioning:latest
+          env:
+            - name: DOTNET_ENVIRONMENT
+              value: production
+            - name: SendGrid__SenderEmail
+              value: "no-reply@myco.cloud"
+            - name: SendGrid__SenderName
+              value: "myco Cloud"
+            - name: decisioning__SqsPhoneNumberUpdatedUrl
+              value: https://sqs.eu-west-2.amazonaws.com/1234567891011/decisioning_phonenumberupdated
+            - name: decisioning__SqsPasswordUpdatedUrl
+              value: https://sqs.eu-west-2.amazonaws.com/1234567891011/decisioning_passwordupdated
+            - name: decisioning__SqsUserReportsAvailableUrl
+              value: https://sqs.eu-west-2.amazonaws.com/1234567891011/decisioning_userreportsavailable
+            - name: decisioning__SqsProvisionalUserCreatedUrl
+              value: https://sqs.eu-west-2.amazonaws.com/1234567891011/decisioning_provisionalusercreated
+            - name: decisioning__SqsCustomerSentMessageUrl
+              value: https://sqs.eu-west-2.amazonaws.com/1234567891011/decisioning_customersentmessage
+            - name: decisioning__SqsOssSentMessageUrl
+              value: https://sqs.eu-west-2.amazonaws.com/1234567891011/decisioning_osssentmessage
+            - name: AWS_DEFAULT_REGION
+              value: eu-west-2
+            - name: Serilog__MinimumLevel__Default
+              value: Information            
+            - name: SendGrid__ApiKey
+              valueFrom:
+                secretKeyRef:
+                  name: sendgrid
+                  key: api-key
+            - name: SendGrid__mycoCloudUrl
+              value: https://myco.cloud/
